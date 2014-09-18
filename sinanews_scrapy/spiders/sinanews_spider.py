@@ -7,51 +7,35 @@ import os.path
 
 from sinanews_scrapy.items import SinanewsScrapyItem
 
-
-
 class SinanewsSpider(CrawlSpider):
     name = 'sinanews'
     allowed_domains=['sina.com.cn']
     start_urls = ['http://search.sina.com.cn/?q=%CF%B0%BD%FC%C6%BD+%BD%B2%BB%B0&range=title&c=news&sort=time']
 
-    """ 由于新浪的页面采用GB2312编码，所以在处理下一页时候的xpath语句要进行编
-    码转换所以此处不再直接用XPath找GBK编码的“下一页”，而是找它的上一级那个框"""
+    '''follow=True 很关键啊，也很漂亮了，只想自己再写一个回调函数如何跟踪这个
+链接呢，原来有更方便的实现方法，害我白熬了两个小时的夜，github上找实例很重要
+啊，感谢geekan大侠的例子啊。'''
 
     rules = [Rule(LinkExtractor(allow = '/.+/\d+.shtml',
         deny = '/171826152112.shtml'),
         'parse_news'),
-        Rule(LinkExtractor(restrict_xpaths = "//div[@class='pagebox']"), 
-            'parse_next_page')]
+        Rule(LinkExtractor(restrict_xpaths = u"//a[@title='下一页']"), 
+            follow=True)]
 
     def parse_news(self, response):
         news = SinanewsScrapyItem()
         temp_dict = {}
 
-        temp_dict['title'] = \
+        news['title'] = \
                 response.xpath("//h1[@id='artibodyTitle']//text()").extract()[0]
 
-        temp_dict['source'] = \
+        news['source'] = \
                 response.xpath("//span[@id='media_name']//text()").extract()[0]
 
-        temp_dict['public_time'] = \
+        news['public_time'] = \
                 response.xpath("//span[@id='pub_date']//text()").extract()[0]
 
         temp = response.xpath("//div[@id='artibody']//p//text()").extract()
-        temp_dict['text'] = '\n'.join(temp)
-
-        with open(os.path.join('temp',temp_dict['title']), 'w') as f:
-            json.dump(temp_dict, f)
-        
-        news['title'] = temp_dict['title']
-        news['source'] = temp_dict['source']
-        news['public_time'] = temp_dict['public_time']
-        news['text'] = temp_dict['text']
+        news['text'] = '\n'.join(temp)
 
         return news
-    
-    def parse_next_page(self, response):
-        print('--------------------------------------------------------------')
-        print(response.url)
-        self.make_requests_from_url(response.url)
-
-
