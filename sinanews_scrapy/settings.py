@@ -13,3 +13,6 @@ SPIDER_MODULES = ['sinanews_scrapy.spiders']
 NEWSPIDER_MODULE = 'sinanews_scrapy.spiders'
 USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 
+DOWNLOAD_TIMEOU = 30
+LOG_LEVEL = 'INFO'
+LOG_FILE='sinanews_scrapy.log'
