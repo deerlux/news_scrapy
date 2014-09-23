@@ -16,3 +16,7 @@ USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 DOWNLOAD_TIMEOU = 30
 LOG_LEVEL = 'INFO'
 LOG_FILE='sinanews_scrapy.log'
+
+OUTPUT_FILE = 'sinanews.db'
+ITEM_PIPELINES = {'sinanews_scrapy.pipelines.SinanewsScrapyPipeline':200}
+
