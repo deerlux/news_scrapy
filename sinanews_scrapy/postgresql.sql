@@ -4,25 +4,32 @@ create table if not exists news_data (
     source varchar(40),
     public_time timestamp,
     body text,
-    crawl_time timestamp
+    crawl_time timestamp,
+    url varchar(160)
 );
 
 create table if not exists keywords (
-    id serial primary key,
-    news_id int references news_data(id),
-    keyword varchar(40)
+    news_id int primary key references news_data(id),
+    keywords varchar(40)
 );
 
 create table if not exists news_domain (
-    id serial primary key,
-    news_id int references news_data(id),
+    news_id int primary key references news_data(id),
     domain varchar(60)
 );
+
+create view news_view as
+    select news_data.id, title, 
+    source, public_time, crawl_time, 
+    url, keywords, domain, news_data.body 
+    from news_data, keywords, news_domain
+    where news_data.id = keywords.news_id 
+    and news_data.id = news_domain.news_id;
 
 create index news_data_title_idx on news_data(title);
 create index news_data_pulic_time_idx on news_data(public_time);
 create index news_data_crawl_time_idx on news_data(crawl_time);
-create index keywords_keyword_idx on keywords(keyword);
+create index keywords_keyword_idx on keywords(keywords);
 create index news_domain_domain_idx on news_domain(domain);
 
 
