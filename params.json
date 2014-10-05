@@ -1,0 +1,1 @@
+{"name":"News scrapy","tagline":"抓取新浪新闻中的数据","body":"sinanews_scrapy\r\n===============\r\n\r\n抓取新浪新闻中的数据\r\n\r\n主要特性\r\n--------\r\n\r\n1. 设置相关的搜索关键字，抓取所有相关的新闻;\r\n2. 可以设置抓取的数量;\r\n3. 最终的结果存储到sqlite数据库中。\r\n4. 每条新闻按照标题生成一个hash码，按照hash码搜索以前有没有已经抓取过。\r\n5. 目前没有一条完成。 \r\n","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
