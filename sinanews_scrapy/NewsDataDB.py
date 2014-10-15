@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 class NewsDataDB:
     
-    def __init__(self, user, password, 
+    def __init__(self, user = '', password= '' , 
             hostname='localhost', dbname='news_data',dbms = 'postgres'):
         
         if dbms.lower() == 'postgres':
@@ -33,8 +33,6 @@ class NewsDataDB:
         self.commit = self.session.commit
         self.rollback = self.session.rollback
         self.flush = self.session.flush
-
-    def __del__(self):
-        self.session.close()
+        self.close = self.session.close
 
 
