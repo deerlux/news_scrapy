@@ -3,10 +3,17 @@ from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy import log
 
-import json
-import os.path
+import re
+from datetime import datetime
 
 from sinanews_scrapy.items import SinanewsScrapyItem
+
+
+def convert_datestr(datestr):    
+    temp = re.subn('[^\d]', '-',datestr, 2)
+    temp = re.sub('([^\d:-])+', '_', temp[0])
+    return datetime.strptime(temp, '%Y-%m-%d_%H:%M')
+    
 
 class SinanewsSpider(CrawlSpider):
     name = 'sinanews'
@@ -33,11 +40,12 @@ class SinanewsSpider(CrawlSpider):
         news['source'] = temp[0] if temp else ''
         
         
-        temp =  response.xpath("//span[@id='pub_date']//text()").extract()
-        news['public_time'] = temp[0] if temp else ''
+        temp =  response.xpath("//span[@id='pub_date']//text()").extract()        
+        news['public_time'] = convert_datestr(temp[0]) if temp else ''
+        
 
         temp = response.xpath("//div[@id='artibody']//p//text()").extract()
-        news['text'] = '\n'.join(temp) if temp else ''
+        news['body'] = '\n'.join(temp) if temp else ''
 
         log.msg(': '.join([response.url, news['title']]), level=log.INFO)
 

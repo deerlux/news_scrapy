@@ -11,4 +11,4 @@ class SinanewsScrapyItem(Item):
     title = Field()
     source = Field()
     public_time = Field()
-    text = Field()
+    body = Field()
