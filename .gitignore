@@ -1,3 +1,9 @@
 *.pyc
 *.json
 *.log
+*~
+*.html
+*.log.*
+*.db
+temp
+

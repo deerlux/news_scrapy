@@ -20,3 +20,5 @@ LOG_FILE='sinanews_scrapy.log'
 OUTPUT_FILE = 'sinanews.db'
 ITEM_PIPELINES = {'sinanews_scrapy.pipelines.SinanewsScrapyPipeline':200}
 
+DATABASE = {'user':'lxq', 'dbms':'postgres','password':'mypassword'}
+

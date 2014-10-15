@@ -4,34 +4,30 @@
 # See: http://doc.scrapy.org/topics/item-pipeline.html
 
 import sinanews_scrapy.settings as settings
+from sinanews_scrapy.NewsDataDB import NewsDataDB
 
-import sqlite3
 from datetime import datetime
 
 class SinanewsScrapyPipeline(object):
 
     def __init__(self):
-        self.conn = sqlite3.connect(settings.OUTPUT_FILE)
-        self.cursor = self.conn.cursor()
-        sql = '''CREATE TABLE IF NOT EXISTS news_data (
-title, source, public_time, text, crawltime);
-CREATE INDEX IF NOT EXISTS title_idx on news_data(title);
-CREATE INDEX IF NOT EXISTS crawltime_idx on news_data(crawltime);'''
-        self.cursor.executescript(sql)
-
+        self.db = NewsDataDB(user = settings.DATABASE['user'],
+                             password = settings.DATABASE['password'],
+                             dbms = settings.DATABASE['dbms'])
+        
     def process_item(self, item, spider):
-        sql = u'''INSERT INTO news_data 
-(title, source, public_time, text, crawltime)
-values ('{title}', '{source}', '{public_time}', '{text}', '{crawltime}')'''
-        sql = sql.format(title = item['title'].replace("'", "''"),
-                source = item['source'].replace("'","''"),
-                public_time = item['public_time'],
-                text = item['text'].replace("'","''"),
-                crawltime = str(datetime.now()))
-        self.cursor.execute(sql)
-        self.conn.commit()
+        data_item = self.db.NewsData()
+        
+        data_item.title = item['title']
+        data_item.source = item['source']
+        data_item.public_time = item['public_time']
+        data_item.body = item['body']
+
+        self.db.add(data_item)
+        self.db.commit()
+       
         return item
     
     def spider_closed(self, spider):
-        self.conn.close()
+        self.db.close()
 
